@@ -1,5 +1,4 @@
 
-## “新增语音播放功能”版本支持功能：
 
 ### 教师端：
 - 使用测试账号登录：t1，密码:123。
@@ -37,3 +36,4 @@ MY_LONGCAT_API_KEY = YOUR_KEY
     USING_LONGCAT = True
 
 '''
+

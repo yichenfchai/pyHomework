@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>学生注册 - 作业管理系统</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .icon {
+            color: #6a11cb;
+        }
+
+        .message-container {
+            margin-bottom: 25px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .success {
+            color: #198754;
+            background-color: #d1e7dd;
+            border-left: 4px solid #198754;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            color: #444;
+            font-weight: 600;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6a11cb;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+            outline: none;
+            background: white;
+        }
+
+        .helper-text {
+            color: #777;
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.3);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .login-link p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .btn-login {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            border-radius: 2px;
+            background: #eee;
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .strength-weak { width: 25%; background-color: #dc3545; }
+        .strength-fair { width: 50%; background-color: #ffc107; }
+        .strength-good { width: 75%; background-color: #17a2b8; }
+        .strength-strong { width: 100%; background-color: #198754; }
+
+        .strength-text {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        @media (max-width: 576px) {
+            .register-card {
+                padding: 25px;
+            }
+
+            .header h2 {
+                font-size: 1.7rem;
+            }
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb10 0%, #2575fc10 100%);
+            border-radius: 10px;
+            border-left: 4px solid #6a11cb;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .feature-item i {
+            color: #6a11cb;
+            font-size: 0.9rem;
+        }
+
+        .role-selector {
+            margin-bottom: 25px;
+        }
+
+        .role-tabs {
+            display: flex;
+            gap: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .role-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #7f8c8d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .role-tab:hover {
+            background: rgba(106, 17, 203, 0.1);
+        }
+
+        .role-tab.active {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+        }
+
+        .role-tab i {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-card">
+            <div class="header">
+                <h2>
+                    <i class="fas fa-user-plus icon"></i> 账号注册
+                </h2>
+                <p>加入作业管理系统，开启高效管理之旅</p>
+            </div>
+
+            <!-- 角色选择 -->
+            <div class="role-selector" style="margin-bottom: 25px;">
+                <div class="role-tabs">
+                    <div class="role-tab {% if selected_role == 'student' %}active{% endif %}" data-role="student">
+                        <i class="fas fa-user-graduate"></i> 学生注册
+                    </div>
+                    <div class="role-tab {% if selected_role == 'teacher' %}active{% endif %}" data-role="teacher">
+                        <i class="fas fa-chalkboard-teacher"></i> 教师注册
+                    </div>
+                </div>
+                <input type="hidden" name="role" id="roleInput" value="{{ selected_role or 'student' }}">
+            </div>
+
+            <div class="message-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="message {{ category }}">
+                                <i class="fas fa-{% if category == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <form method="POST" id="registerForm">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user icon"></i> 用户名:
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="username" name="username" class="form-control"
+                               placeholder="请输入用户名" required>
+                    </div>
+                    <p class="helper-text">
+                        <i class="fas fa-info-circle"></i> 用户名必须唯一，将用于登录
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock icon"></i> 密码:
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" name="password" class="form-control"
+                               placeholder="请输入密码" required onkeyup="checkPasswordStrength()">
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-meter" id="strengthMeter"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText">密码强度：未设置</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">
+                        <i class="fas fa-lock icon"></i> 确认密码:
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="confirm_password" name="confirm_password"
+                               class="form-control" placeholder="请再次输入密码" required>
+                    </div>
+                    <div class="helper-text" id="passwordMatch">
+                        <i class="fas fa-check-circle" style="color: #198754;"></i> 密码匹配
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">
+                        <i class="fas fa-id-card icon"></i> 姓名:
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" id="name" name="name" class="form-control"
+                               placeholder="请输入真实姓名" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope icon"></i> 邮箱 (可选):
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="email" name="email" class="form-control"
+                               placeholder="请输入邮箱地址">
+                    </div>
+                    <p class="helper-text">
+                        <i class="fas fa-info-circle"></i> 可用于找回密码和接收通知
+                    </p>
+                </div>
+
+                <div class="feature-list" id="featureList">
+                    <div class="feature-item" id="feature1">
+                        <i class="fas fa-check"></i> <span id="feature1-text">查看和提交作业</span>
+                    </div>
+                    <div class="feature-item" id="feature2">
+                        <i class="fas fa-check"></i> <span id="feature2-text">查看成绩和反馈</span>
+                    </div>
+                    <div class="feature-item" id="feature3">
+                        <i class="fas fa-check"></i> <span id="feature3-text">加入课程学习</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-user-plus"></i> 注册账号
+                </button>
+            </form>
+
+            <div class="login-link">
+                <p>已有账号？</p>
+                <a href="{{ url_for('login') }}" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> 立即登录
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 角色选择功能
+        document.querySelectorAll('.role-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const role = this.getAttribute('data-role');
+                
+                // 更新活动状态
+                document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 更新隐藏输入框
+                document.getElementById('roleInput').value = role;
+                
+                // 更新功能列表
+                updateFeatureList(role);
+            });
+        });
+
+        // 更新功能列表
+        function updateFeatureList(role) {
+            if (role === 'teacher') {
+                document.getElementById('feature1-text').textContent = '创建和管理课程';
+                document.getElementById('feature2-text').textContent = '发布和批改作业';
+                document.getElementById('feature3-text').textContent = '查看学生提交情况';
+            } else {
+                document.getElementById('feature1-text').textContent = '查看和提交作业';
+                document.getElementById('feature2-text').textContent = '查看成绩和反馈';
+                document.getElementById('feature3-text').textContent = '加入课程学习';
+            }
+        }
+
+        // 初始化功能列表
+        const initialRole = document.getElementById('roleInput').value;
+        updateFeatureList(initialRole);
+
+        // 密码强度检查
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const meter = document.getElementById('strengthMeter');
+            const text = document.getElementById('strengthText');
+
+            // 重置样式
+            meter.className = 'strength-meter';
+
+            if (password.length === 0) {
+                text.textContent = '密码强度：未设置';
+                return;
+            }
+
+            let strength = 0;
+            let feedback = '';
+
+            // 长度检查
+            if (password.length >= 8) strength += 1;
+
+            // 复杂度检查
+            if (/[a-z]/.test(password)) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
+
+            // 设置强度等级
+            if (strength <= 2) {
+                meter.className = 'strength-meter strength-weak';
+                text.textContent = '密码强度：弱';
+                text.style.color = '#dc3545';
+            } else if (strength === 3) {
+                meter.className = 'strength-meter strength-fair';
+                text.textContent = '密码强度：中等';
+                text.style.color = '#ffc107';
+            } else if (strength === 4) {
+                meter.className = 'strength-meter strength-good';
+                text.textContent = '密码强度：良好';
+                text.style.color = '#17a2b8';
+            } else {
+                meter.className = 'strength-meter strength-strong';
+                text.textContent = '密码强度：强';
+                text.style.color = '#198754';
+            }
+
+            // 检查密码匹配
+            checkPasswordMatch();
+        }
+
+        // 检查密码匹配
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const matchDiv = document.getElementById('passwordMatch');
+
+            if (confirmPassword.length === 0) {
+                matchDiv.innerHTML = '<i class="fas fa-info-circle"></i> 请确认密码';
+                matchDiv.style.color = '#777';
+                return;
+            }
+
+            if (password === confirmPassword) {
+                matchDiv.innerHTML = '<i class="fas fa-check-circle"></i> 密码匹配';
+                matchDiv.style.color = '#198754';
+            } else {
+                matchDiv.innerHTML = '<i class="fas fa-times-circle"></i> 密码不匹配';
+                matchDiv.style.color = '#dc3545';
+            }
+        }
+
+        // 实时检查密码匹配
+        document.getElementById('confirm_password').addEventListener('keyup', checkPasswordMatch);
+        document.getElementById('password').addEventListener('keyup', checkPasswordMatch);
+
+        // 表单提交验证
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            // 检查密码长度
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('密码长度至少6个字符');
+                return;
+            }
+
+            // 检查密码匹配
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('两次输入的密码不一致');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

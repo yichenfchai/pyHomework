@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>提交作业 - 作业管理系统</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.03"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h20v20H20zM60 20h20v20H60zM40 60h20v20H40z" fill="#6a11cb"/></svg>');
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 i {
+            color: #6a11cb;
+            font-size: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #777, #555);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(85, 85, 85, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #6a11cb;
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e1e8ed;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: #3498db;
+        }
+
+        .assignment-info {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e1e8ed;
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .assignment-title {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .assignment-title i {
+            color: #6a11cb;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #34495e;
+            font-size: 14px;
+        }
+
+        .meta-item i {
+            color: #6a11cb;
+        }
+
+        .due-date-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .due-date-urgent {
+            background: linear-gradient(90deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+
+        .due-date-warning {
+            background: linear-gradient(90deg, #fff3cd, #ffeaa7);
+            color: #856404;
+        }
+
+        .due-date-normal {
+            background: linear-gradient(90deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+
+        .assignment-content {
+            line-height: 1.6;
+            color: #34495e;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .questions-list {
+            margin-top: 20px;
+        }
+
+        .question-item {
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .question-prompt {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .question-prompt i {
+            color: #6a11cb;
+            font-size: 14px;
+        }
+
+        .question-knowledge {
+            color: #7f8c8d;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .question-knowledge i {
+            color: #6a11cb;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: #6a11cb;
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 150px;
+            line-height: 1.6;
+        }
+
+        .character-count {
+            text-align: right;
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .character-count.warning {
+            color: #f39c12;
+        }
+
+        .character-count.limit {
+            color: #e74c3c;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #6a11cb;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(106, 17, 203, 0.02);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .file-upload-area.drag-over {
+            background: rgba(106, 17, 203, 0.1);
+            border-color: #2575fc;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .upload-hint {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .file-types-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .file-type-badge {
+            padding: 4px 12px;
+            background: white;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #6a11cb;
+            border: 1px solid #6a11cb;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .btn-choose-file {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(106, 17, 203, 0.2);
+        }
+
+        .btn-choose-file:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .file-info {
+            background: linear-gradient(90deg, #d4edda, #c3e6cb);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #28a745;
+        }
+
+        .file-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .file-info-title {
+            font-weight: 600;
+            color: #155724;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-download {
+            background: linear-gradient(90deg, #17a2b8, #5bc0de);
+        }
+
+        .btn-preview {
+            background: linear-gradient(90deg, #28a745, #4caf50);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #155724;
+            font-size: 14px;
+        }
+
+        .file-type {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .file-name {
+            font-weight: 500;
+        }
+
+        .file-size {
+            opacity: 0.8;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .btn-submit {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+        }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 24px;
+            background: linear-gradient(90deg, #777, #555);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(85, 85, 85, 0.3);
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(106, 17, 203, 0.05);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        .submission-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: linear-gradient(90deg, #d4edda, #c3e6cb);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+
+        .submission-status i {
+            color: #28a745;
+            font-size: 24px;
+        }
+
+        .submission-status-content h4 {
+            color: #155724;
+            margin-bottom: 5px;
+        }
+
+        .submission-status-content p {
+            color: #155724;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .assignment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .assignment-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .file-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 60px; height: 60px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="width: 80px; height: 80px; top: 70%; left: 90%; animation-delay: 3s;"></div>
+        <div class="floating-element" style="width: 40px; height: 40px; top: 30%; left: 85%; animation-delay: 6s;"></div>
+        <div class="floating-element" style="width: 70px; height: 70px; top: 85%; left: 10%; animation-delay: 9s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-file-upload"></i>
+                {% if submission %}更新作业提交{% else %}提交作业{% endif %}
+            </h1>
+            <a href="{{ url_for('student_dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i>返回学生面板
+            </a>
+        </div>
+
+        {% if submission %}
+        <div class="submission-status">
+            <i class="fas fa-check-circle"></i>
+            <div class="submission-status-content">
+                <h4>您已经提交过此作业</h4>
+                <p>提交时间: {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <h2><i class="fas fa-info-circle"></i>作业内容</h2>
+            <div class="assignment-info">
+                <div class="assignment-header">
+                    <div class="assignment-title">
+                        <i class="fas fa-bookmark"></i>{{ assignment.title }}
+                    </div>
+                    {% if assignment.due_date %}
+                    {% set now_time = namespace(value=None) %}
+                    {% if current_time is defined %}
+                        {% set now_time.value = current_time %}
+                    {% elif now_variable is defined %}
+                        {% set now_time.value = now_variable %}
+                    {% endif %}
+
+                    {% if now_time.value is defined and now_time.value is not none %}
+                        {% set days_left = (assignment.due_date - now_time.value).days %}
+                        <div class="due-date-badge {% if days_left < 0 %}due-date-urgent{% elif days_left <= 2 %}due-date-warning{% else %}due-date-normal{% endif %}">
+                            <i class="fas fa-clock"></i>
+                            {% if days_left < 0 %}
+                                已过期 {{ -days_left }} 天
+                            {% elif days_left == 0 %}
+                                今天截止
+                            {% elif days_left == 1 %}
+                                明天截止
+                            {% else %}
+                                {{ days_left }} 天后截止
+                            {% endif %}
+                            ({{ assignment.due_date.strftime('%Y-%m-%d') }})
+                        </div>
+                    {% else %}
+                        <div class="due-date-badge due-date-normal">
+                            <i class="fas fa-clock"></i>
+                            截止: {{ assignment.due_date.strftime('%Y-%m-%d') }}
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="assignment-content">
+                    {{ assignment.content }}
+                </div>
+
+                {% if assignment.questions %}
+                <div class="questions-list">
+                    <h3 style="margin: 20px 0 15px; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-question-circle"></i>题目与知识点
+                    </h3>
+                    {% for question in assignment.questions %}
+                    <div class="question-item">
+                        <div class="question-prompt">
+                            <i class="fas fa-hashtag"></i>{{ loop.index }}. {{ question.prompt }}
+                        </div>
+                        <div class="question-knowledge">
+                            <i class="fas fa-lightbulb"></i>知识点: {{ question.knowledge_point }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="submitForm">
+            <div class="section">
+                <h2><i class="fas fa-keyboard"></i>文本内容</h2>
+                <div class="form-group">
+                    <label for="content" class="form-label">
+                        <i class="fas fa-align-left"></i>作业答案/说明
+                    </label>
+                    <textarea id="content" name="content" class="form-control"
+                              placeholder="请在此处输入您的作业答案、代码或说明文字（可选）">{% if submission %}{{ submission.content }}{% endif %}</textarea>
+                    <div id="charCount" class="character-count">0 个字符</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-file-upload"></i>文件上传</h2>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-paperclip"></i>上传作业文件
+                    </label>
+
+                    <div class="file-upload-area" id="dropArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">
+                            {% if submission and submission.file_name %}
+                                点击或拖拽文件来替换当前文件
+                            {% else %}
+                                点击或拖拽文件上传
+                            {% endif %}
+                        </div>
+                        <div class="upload-hint">
+                            支持的文件格式: .doc, .docx, .pdf, .txt
+                        </div>
+                        <div class="file-types-list">
+                            <span class="file-type-badge">.doc</span>
+                            <span class="file-type-badge">.docx</span>
+                            <span class="file-type-badge">.pdf</span>
+                            <span class="file-type-badge">.txt</span>
+                        </div>
+                        <div class="upload-hint">
+                            最大文件大小: 16MB
+                        </div>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="file" name="file"
+                                   accept=".doc,.docx,.pdf,.txt"
+                                   onchange="updateFileName()">
+                            <div class="btn-choose-file">
+                                <i class="fas fa-folder-open"></i>
+                                选择文件
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="fileName" style="margin-top: 15px; font-size: 14px; color: #6a11cb; display: none;">
+                        <i class="fas fa-file"></i> 已选择文件: <span id="selectedFileName"></span>
+                    </div>
+
+                    {% if submission and submission.file_name %}
+                    <div class="file-info">
+                        <div class="file-info-header">
+                            <div class="file-info-title">
+                                <i class="fas fa-file-alt"></i>已上传文件
+                            </div>
+                            <div class="file-actions">
+                                <a href="{{ url_for('download_file', submission_id=submission.id) }}" class="btn-action btn-download">
+                                    <i class="fas fa-download"></i>下载
+                                </a>
+                                <a href="{{ url_for('preview_file', submission_id=submission.id) }}" class="btn-action btn-preview">
+                                    <i class="fas fa-eye"></i>预览和评分
+                                </a>
+                            </div>
+                        </div>
+                        <div class="file-details">
+                            <span class="file-type">{{ submission.file_name.split('.')[-1].upper() }}</span>
+                            <span class="file-name">{{ submission.file_name }}</span>
+                            <span class="file-size">
+                                <i class="fas fa-hdd"></i>
+                                {{ (submission.file_size / 1024)|round(1) if submission.file_size else '未知' }} KB
+                            </span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-{{ 'save' if submission else 'paper-plane' }}"></i>
+                    {% if submission %}更新提交{% else %}提交作业{% endif %}
+                </button>
+                <a href="{{ url_for('student_dashboard') }}" class="btn-cancel">
+                    <i class="fas fa-times"></i>取消
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // 字符计数功能
+        const contentTextarea = document.getElementById('content');
+        const charCountElement = document.getElementById('charCount');
+
+        function updateCharCount() {
+            const count = contentTextarea.value.length;
+            charCountElement.textContent = `${count} 个字符`;
+
+            if (count === 0) {
+                charCountElement.className = 'character-count';
+            } else if (count > 5000) {
+                charCountElement.className = 'character-count limit';
+            } else if (count > 3000) {
+                charCountElement.className = 'character-count warning';
+            } else {
+                charCountElement.className = 'character-count';
+            }
+        }
+
+        contentTextarea.addEventListener('input', updateCharCount);
+        updateCharCount(); // 初始化
+
+        // 文件上传区域交互
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('file');
+        const fileNameElement = document.getElementById('fileName');
+        const selectedFileNameElement = document.getElementById('selectedFileName');
+
+        // 显示选择的文件名
+        function updateFileName() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                selectedFileNameElement.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                fileNameElement.style.display = 'block';
+            } else {
+                fileNameElement.style.display = 'none';
+            }
+        }
+
+        // 防止默认行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // 高亮拖拽区域
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('drag-over');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('drag-over');
+        }
+
+        // 处理文件拖放
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileName();
+            }
+        }
+
+        // 点击整个区域触发文件选择
+        dropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // 表单提交验证
+        document.getElementById('submitForm').addEventListener('submit', function(e) {
+            const textContent = contentTextarea.value.trim();
+            const fileSelected = fileInput.files.length > 0;
+
+            if (!textContent && !fileSelected) {
+                e.preventDefault();
+                alert('请至少提供文本内容或上传一个文件');
+                return;
+            }
+
+            // 文件大小验证
+            if (fileSelected) {
+                const file = fileInput.files[0];
+                const maxSize = 16 * 1024 * 1024; // 16MB
+
+                if (file.size > maxSize) {
+                    e.preventDefault();
+                    alert(`文件大小超过限制 (${(file.size / (1024*1024)).toFixed(1)}MB > 16MB)`);
+                    return;
+                }
+
+                // 文件类型验证
+                const allowedTypes = ['.doc', '.docx', '.pdf', '.txt'];
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+                if (!allowedTypes.includes(fileExtension)) {
+                    e.preventDefault();
+                    alert('不支持的文件类型。请上传 .doc, .docx, .pdf 或 .txt 文件');
+                    return;
+                }
+            }
+
+            // 显示提交确认
+            if (!confirm('确定要{% if submission %}更新{% else %}提交{% endif %}作业吗？')) {
+                e.preventDefault();
+            }
+        });
+
+        // 页面加载时自动聚焦到文本区域
+        document.addEventListener('DOMContentLoaded', function() {
+            if (contentTextarea.value === '') {
+                contentTextarea.focus();
+            }
+        });
+    </script>
+</body>
+</html>

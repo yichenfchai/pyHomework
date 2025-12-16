@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>教师面板 - 作业管理系统</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.03"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h20v20H20zM60 20h20v20H60zM40 60h20v20H40z" fill="#6a11cb"/></svg>');
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 i {
+            color: #6a11cb;
+            font-size: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-logout {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 65, 108, 0.3);
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(90deg, #17a2b8, #5bc0de);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin: 30px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e1e8ed;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: #3498db;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #e1e8ed;
+            color: #34495e;
+            font-size: 14.5px;
+        }
+
+        tr {
+            transition: background-color 0.2s;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-published {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-draft {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-withdrawn {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons form {
+            display: inline;
+        }
+
+        .btn-small {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .btn-view {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-edit {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .btn-withdraw {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-publish {
+            background: linear-gradient(90deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 16px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+            display: block;
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(106, 17, 203, 0.05);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 60px; height: 60px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="width: 80px; height: 80px; top: 70%; left: 90%; animation-delay: 3s;"></div>
+        <div class="floating-element" style="width: 40px; height: 40px; top: 30%; left: 85%; animation-delay: 6s;"></div>
+        <div class="floating-element" style="width: 70px; height: 70px; top: 85%; left: 10%; animation-delay: 9s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chalkboard-teacher"></i>教师面板 - 欢迎, {{ session.name }}</h1>
+            <a href="{{ url_for('logout') }}" class="btn btn-logout">
+                <i class="fas fa-sign-out-alt"></i>退出登录
+            </a>
+        </div>
+
+        <div class="action-bar">
+            <a href="{{ url_for('student_management') }}" class="btn btn-info">
+                <i class="fas fa-users"></i>学生管理
+            </a>
+            <a href="{{ url_for('manage_courses') }}" class="btn btn-info">
+                <i class="fas fa-book"></i>课程管理
+            </a>
+            <a href="{{ url_for('create_assignment') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i>发布新作业
+            </a>
+            <a href="{{ url_for('teacher_profile') }}" class="btn btn-secondary">
+                <i class="fas fa-user-cog"></i>个人中心
+            </a>
+        </div>
+
+        <h2><i class="fas fa-book-open"></i>我的课程</h2>
+        {% if courses %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>课程名称</th>
+                        <th>邀请码</th>
+                        <th>学生人数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.name }}</td>
+                        <td><strong>{{ course.invite_code }}</strong></td>
+                        <td>{{ course.enrollments|length }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-message">
+                <i class="fas fa-book"></i>
+                <p>还没有创建课程，点击课程管理开始创建。</p>
+            </div>
+        {% endif %}
+
+        <h2><i class="fas fa-tasks"></i>作业列表</h2>
+        {% if assignments %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>标题</th>
+                        <th>课程</th>
+                        <th>状态</th>
+                        <th>发布时间</th>
+                        <th>截止时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in assignments %}
+                    <tr>
+                        <td><strong>{{ assignment.title }}</strong></td>
+                        <td>{{ assignment.course.name if assignment.course else '未指定' }}</td>
+                        <td>
+                            {% if assignment.status == 'published' %}
+                                <span class="status-published">已发布</span>
+                            {% elif assignment.status == 'withdrawn' %}
+                                <span class="status-withdrawn">已撤回</span>
+                            {% else %}
+                                <span class="status-draft">草稿</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ assignment.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>{{ assignment.due_date.strftime('%Y-%m-%d') if assignment.due_date else '无' }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('view_submissions', assignment_id=assignment.id) }}" class="btn btn-small btn-view">
+                                    <i class="fas fa-eye"></i>查看提交
+                                </a>
+                                <a href="{{ url_for('edit_assignment', assignment_id=assignment.id) }}" class="btn btn-small btn-edit">
+                                    <i class="fas fa-edit"></i>编辑
+                                </a>
+                                {% if assignment.status == 'published' %}
+                                <form action="{{ url_for('withdraw_assignment', assignment_id=assignment.id) }}" method="post">
+                                    <button type="submit" class="btn btn-small btn-withdraw">
+                                        <i class="fas fa-undo"></i>撤回
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form action="{{ url_for('publish_assignment', assignment_id=assignment.id) }}" method="post">
+                                    <button type="submit" class="btn btn-small btn-publish">
+                                        <i class="fas fa-paper-plane"></i>发布
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-message">
+                <i class="fas fa-clipboard-list"></i>
+                <p>还没有发布任何作业。</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // 表格行悬停效果
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+            });
+
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 按钮点击效果
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(0)';
+            });
+
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>加入课程 - 作业管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.03"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h20v20H20zM60 20h20v20H60zM40 60h20v20H40z" fill="#6a11cb"/></svg>');
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px; /* 调宽到800px */
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 i {
+            color: #6a11cb;
+            font-size: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #777, #555);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(85, 85, 85, 0.3);
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-intro {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .form-intro i {
+            color: #3498db;
+            margin-right: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #2c3e50;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: #6a11cb;
+            font-size: 18px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 16px 16px 50px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        input[type="text"]::placeholder {
+            color: #bdc3c7;
+        }
+
+        .form-hint {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-hint i {
+            color: #f39c12;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(106, 17, 203, 0.05);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        .invite-example {
+            background: linear-gradient(90deg, #fff3cd, #ffeaa7);
+            border-radius: 8px;
+            padding: 20px; /* 增加内边距 */
+            margin-top: 25px; /* 增加上边距 */
+            border-left: 4px solid #ffc107;
+        }
+
+        .invite-example h4 {
+            color: #856404;
+            margin-bottom: 12px; /* 增加下边距 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 17px; /* 稍微增大字体 */
+        }
+
+        .invite-example h4 i {
+            color: #ffc107;
+            font-size: 18px; /* 稍微增大图标 */
+        }
+
+        .invite-example p {
+            color: #856404;
+            font-size: 15px; /* 稍微增大字体 */
+            line-height: 1.6; /* 增加行高 */
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 25px; /* 移动端也增加内边距 */
+                margin: 20px;
+                max-width: 95%; /* 移动端几乎全宽 */
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 60px; height: 60px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="width: 80px; height: 80px; top: 70%; left: 90%; animation-delay: 3s;"></div>
+        <div class="floating-element" style="width: 40px; height: 40px; top: 30%; left: 85%; animation-delay: 6s;"></div>
+        <div class="floating-element" style="width: 70px; height: 70px; top: 85%; left: 10%; animation-delay: 9s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-sign-in-alt"></i>通过邀请码加入课程</h1>
+            <a href="{{ url_for('student_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>返回学生面板
+            </a>
+        </div>
+
+        <div class="form-intro">
+            <p><i class="fas fa-info-circle"></i>请输入老师提供的课程邀请码加入课程，加入后即可查看和提交该课程的作业。</p>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="invite_code" class="form-label">
+                    <i class="fas fa-key"></i>邀请码:
+                </label>
+                <div class="input-container">
+                    <i class="fas fa-key input-icon"></i>
+                    <input type="text" id="invite_code" name="invite_code"
+                           placeholder="请输入老师提供的邀请码" required>
+                </div>
+                <div class="form-hint">
+                    <i class="fas fa-lightbulb"></i>邀请码通常由老师创建课程时生成，请向您的老师索要。
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-plus-circle"></i>加入课程
+            </button>
+        </form>
+
+        <div class="invite-example">
+            <h4><i class="fas fa-question-circle"></i>如何获取邀请码？</h4>
+            <p>1. 联系您的课程老师获取课程邀请码<br>
+               2. 邀请码通常是字母和数字的组合，例如：ABC123<br>
+               3. 每个邀请码只能加入对应的课程一次<br>
+               4. 如果输入错误，可以联系老师重新获取</p>
+        </div>
+    </div>
+
+    <script>
+        // 按钮点击效果
+        document.querySelectorAll('.btn, .btn-submit').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(0)';
+            });
+
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+        });
+
+        // 输入框聚焦效果
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.parentElement.classList.remove('focused');
+            });
+        });
+
+        // 页面加载后自动聚焦到输入框
+        document.addEventListener('DOMContentLoaded', function() {
+            const inviteInput = document.getElementById('invite_code');
+            if (inviteInput) {
+                inviteInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>

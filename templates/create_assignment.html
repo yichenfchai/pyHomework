@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{{ '编辑作业' if assignment else '发布作业' }} - 作业管理系统</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.03"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h20v20H20zM60 20h20v20H60zM40 60h20v20H40z" fill="#6a11cb"/></svg>');
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 i {
+            color: #6a11cb;
+            font-size: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 176, 155, 0.3);
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #6a11cb;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #6a11cb;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: #6a11cb;
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23344' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+
+        .form-hint {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.5;
+        }
+
+        .form-hint i {
+            color: #3498db;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .questions-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 2px solid #e1e8ed;
+        }
+
+        .question-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .question-row input {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .question-row input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(90deg, #27ae60, #229954);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(39, 174, 96, 0.2);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        .status-options {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e1e8ed;
+            flex-wrap: wrap;
+        }
+
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 10px 0;
+        }
+
+        .status-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #6a11cb;
+            cursor: pointer;
+        }
+
+        .status-label {
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 30px auto 0;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(106, 17, 203, 0.05);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .question-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .status-options {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 60px; height: 60px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="width: 80px; height: 80px; top: 70%; left: 90%; animation-delay: 3s;"></div>
+        <div class="floating-element" style="width: 40px; height: 40px; top: 30%; left: 85%; animation-delay: 6s;"></div>
+        <div class="floating-element" style="width: 70px; height: 70px; top: 85%; left: 10%; animation-delay: 9s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-{{ 'edit' if assignment else 'file-upload' }}"></i>
+                {{ '编辑作业' if assignment else '发布新作业' }}
+            </h1>
+            <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i>返回教师面板
+            </a>
+        </div>
+
+        <form method="POST">
+            <div class="section">
+                <div class="section-title"><i class="fas fa-info-circle"></i>作业基本信息</div>
+
+                <div class="form-group">
+                    <label for="title" class="form-label">
+                        <i class="fas fa-heading"></i>作业标题:
+                    </label>
+                    <input type="text" id="title" name="title" class="form-control"
+                           value="{{ assignment.title if assignment else '' }}"
+                           placeholder="请输入作业标题" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="content" class="form-label">
+                        <i class="fas fa-align-left"></i>作业内容:
+                    </label>
+                    <textarea id="content" name="content" class="form-control"
+                              placeholder="请详细描述作业内容、要求等" required>{{ assignment.content if assignment else '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="course_id" class="form-label">
+                        <i class="fas fa-book"></i>所属课程:
+                    </label>
+                    <select id="course_id" name="course_id" class="form-control">
+                        <option value="">-- 选择课程 --</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}"
+                                {% if assignment and assignment.course_id == course.id %}selected{% endif %}>
+                                {{ course.name }} (邀请码: {{ course.invite_code }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-hint">
+                        <i class="fas fa-info-circle"></i>课程下的学生才能看到该作业；留空则所有学生可见。
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="due_date" class="form-label">
+                        <i class="fas fa-calendar-alt"></i>截止日期:
+                    </label>
+                    <input type="date" id="due_date" name="due_date" class="form-control"
+                           value="{{ assignment.due_date.strftime('%Y-%m-%d') if assignment and assignment.due_date else '' }}">
+                    <div class="form-hint">
+                        <i class="fas fa-clock"></i>不设置截止日期则表示作业长期有效。
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><i class="fas fa-question-circle"></i>题目与知识点配置</div>
+
+                <div class="form-hint">
+                    <i class="fas fa-lightbulb"></i>可针对每一道题配置知识点，学生提交时也能看到对应信息。
+                </div>
+
+                <div class="questions-container" id="questions-container">
+                    {% set question_list = assignment.questions if assignment else [] %}
+                    {% if question_list %}
+                        {% for question in question_list %}
+                            <div class="question-row">
+                                <input type="text" name="question_text[]" placeholder="题目内容"
+                                       value="{{ question.prompt }}">
+                                <input type="text" name="knowledge_point[]" placeholder="知识点"
+                                       value="{{ question.knowledge_point }}">
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="question-row">
+                            <input type="text" name="question_text[]" placeholder="题目内容">
+                            <input type="text" name="knowledge_point[]" placeholder="知识点">
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn-add" onclick="addQuestionRow()">
+                    <i class="fas fa-plus"></i>添加题目
+                </button>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><i class="fas fa-bullhorn"></i>发布状态设置</div>
+
+                <div class="status-options">
+                    <label class="status-option">
+                        <input type="radio" name="publish_action" value="publish"
+                               {% if not assignment or assignment.status == 'published' %}checked{% endif %}>
+                        <span class="status-label">立即发布</span>
+                    </label>
+                    <label class="status-option">
+                        <input type="radio" name="publish_action" value="draft"
+                               {% if assignment and assignment.status == 'draft' %}checked{% endif %}>
+                        <span class="status-label">保存为草稿</span>
+                    </label>
+                    {% if assignment %}
+                        <label class="status-option">
+                            <input type="radio" name="publish_action" value="withdrawn"
+                                   {% if assignment.status == 'withdrawn' %}checked{% endif %}>
+                            <span class="status-label">撤回作业</span>
+                        </label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-{{ 'save' if assignment else 'plus' }}"></i>
+                    {{ '更新作业' if assignment else '保存作业' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function addQuestionRow() {
+            const container = document.getElementById('questions-container');
+            const row = document.createElement('div');
+            row.className = 'question-row';
+            row.innerHTML = `
+                <input type="text" name="question_text[]" placeholder="题目内容" required>
+                <input type="text" name="knowledge_point[]" placeholder="知识点">
+            `;
+            container.appendChild(row);
+
+            // 滚动到新添加的行
+            row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // 聚焦到新添加的输入框
+            row.querySelector('input').focus();
+        }
+
+        // 按钮点击效果
+        document.querySelectorAll('.btn, .btn-add, .btn-submit').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(0)';
+            });
+
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+        });
+
+        // 输入框聚焦效果
+        document.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body>
+</html>

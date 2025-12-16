@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 作业管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h20v20H20zM60 20h20v20H60zM40 60h20v20H40z" fill="white"/></svg>');
+            z-index: -1;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .system-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .system-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            border-radius: 2px;
+        }
+
+        .welcome-text {
+            text-align: center;
+            font-size: 16px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-title i {
+            color: #3498db;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #3498db;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 15px;
+            color: #7f8c8d;
+            padding-top: 20px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .register-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .register-link a:hover {
+            color: #2575fc;
+            text-decoration: underline;
+        }
+
+        .test-accounts {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            font-size: 14px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .test-accounts p {
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-accounts ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .test-accounts li {
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+
+        .test-accounts small {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fdf0ed;
+            border-radius: 10px;
+            font-size: 14px;
+            border-left: 4px solid #e74c3c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        .role-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .role-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #7f8c8d;
+        }
+
+        .role-tab.active {
+            background: white;
+            color: #3498db;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .system-title {
+                font-size: 24px;
+            }
+
+            .welcome-text {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <!-- 浮动背景元素 -->
+        <div class="floating-element" style="width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="width: 60px; height: 60px; top: 60%; left: 80%; animation-delay: 2s;"></div>
+        <div class="floating-element" style="width: 100px; height: 100px; top: 30%; left: 50%; animation-delay: 4s;"></div>
+        <div class="floating-element" style="width: 50px; height: 50px; top: 80%; left: 20%; animation-delay: 6s;"></div>
+    </div>
+
+    <div class="login-container">
+        <h1 class="system-title">作业管理系统</h1>
+
+        <div class="welcome-text">
+            欢迎使用作业管理系统，这是一个专为教师和学生设计的在线作业管理平台，帮助您更高效地管理和提交作业。
+        </div>
+
+        <div class="role-tabs">
+            <div class="role-tab active">学生登录</div>
+            <div class="role-tab">教师登录</div>
+        </div>
+
+        <h2 class="login-title">
+            <i class="fas fa-user-circle"></i>欢迎登录
+        </h2>
+        <p class="login-subtitle">请输入您的账号信息</p>
+
+        <!-- 错误消息显示区域 -->
+        <div class="error-messages">
+            <!-- Flask模板语法保持不变 -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="error">
+                            <i class="fas fa-exclamation-circle"></i>{{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if error %}
+            <div class="error">
+                <i class="fas fa-exclamation-circle"></i>{{ error }}
+            </div>
+            {% endif %}
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <div class="input-container">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <div class="input-container">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i>登录
+            </button>
+        </form>
+
+        <div class="register-link">
+            还没有账号？<a href="{{ url_for('register') }}">点击注册账号（学生/教师）</a>
+        </div>
+
+        <div class="test-accounts">
+            <p><i class="fas fa-info-circle"></i><strong>测试账号:</strong></p>
+            <ul>
+                <li>老师: t1 / 123</li>
+                <li>学生: s1 / 123</li>
+                <li>学生: s2 / 123</li>
+            </ul>
+            <p><small>提示：现在支持教师和学生注册，请前往注册页面选择角色</small></p>
+        </div>
+    </div>
+
+    <script>
+        // 角色选项卡切换
+        document.querySelectorAll('.role-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 输入框聚焦效果增强
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body>
+</html>

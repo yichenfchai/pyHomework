@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>课程资料 - 作业管理系统</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.03"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h20v20H20zM60 20h20v20H60zM40 60h20v20H40z" fill="#6a11cb"/></svg>');
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 i {
+            color: #6a11cb;
+            font-size: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #777, #555);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(85, 85, 85, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 18px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        th i {
+            margin-right: 8px;
+        }
+
+        td {
+            padding: 18px 14px;
+            border-bottom: 1px solid #e1e8ed;
+            color: #34495e;
+            font-size: 14.5px;
+        }
+
+        tr {
+            transition: background-color 0.2s;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-type {
+            background: #3498db;
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 16px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+            display: block;
+        }
+
+        .course-info {
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3498db;
+        }
+
+        .course-info h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .course-info h2 i {
+            color: #6a11cb;
+        }
+
+        .file-icon {
+            font-size: 20px;
+            margin-right: 8px;
+            color: #6a11cb;
+        }
+
+        .description-cell {
+            max-width: 300px;
+            word-break: break-word;
+            line-height: 1.5;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-folder-open"></i>课程资料 - {{ course.name }}</h1>
+            <a href="{{ url_for('student_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>返回学生面板
+            </a>
+        </div>
+
+        <div class="course-info">
+            <h2><i class="fas fa-book"></i>{{ course.name }}</h2>
+            {% if course.description %}
+                <p style="color: #7f8c8d; margin-top: 8px;">{{ course.description }}</p>
+            {% endif %}
+        </div>
+
+        <h2 style="font-size: 22px; color: #2c3e50; margin: 30px 0 20px; padding-bottom: 12px; border-bottom: 2px solid #e1e8ed;">
+            <i class="fas fa-list-alt"></i>资料列表
+        </h2>
+
+        {% if materials %}
+        <table>
+            <thead>
+                <tr>
+                    <th><i class="fas fa-heading"></i>标题</th>
+                    <th><i class="fas fa-tags"></i>类型</th>
+                    <th><i class="fas fa-file"></i>文件名</th>
+                    <th><i class="fas fa-align-left"></i>描述</th>
+                    <th><i class="fas fa-calendar-plus"></i>发布时间</th>
+                    <th><i class="fas fa-cog"></i>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in materials %}
+                <tr>
+                    <td><strong>{{ material.title }}</strong></td>
+                    <td><span class="badge badge-type">{{ material.material_type }}</span></td>
+                    <td>
+                        <i class="fas fa-file file-icon"></i>
+                        {{ material.file_name }}
+                    </td>
+                    <td class="description-cell">{{ material.description or '-' }}</td>
+                    <td>{{ material.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <a href="{{ url_for('download_material', material_id=material.id) }}" class="btn btn-primary">
+                            <i class="fas fa-download"></i>查看/下载
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-message">
+            <i class="fas fa-folder-open"></i>
+            <p>该课程暂无已发布的资料。</p>
+            <p>请等待教师上传并发布资料。</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // 按钮点击效果
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(0)';
+            });
+
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+        });
+
+        // 表格行悬停效果
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+            });
+
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+

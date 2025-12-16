@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>查看提交 - 作业管理系统</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.03"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h20v20H20zM60 20h20v20H60zM40 60h20v20H40z" fill="#6a11cb"/></svg>');
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 i {
+            color: #6a11cb;
+            font-size: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #6a11cb;
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e1e8ed;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: #3498db;
+        }
+
+        .assignment-info {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e1e8ed;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #34495e;
+        }
+
+        .meta-item i {
+            color: #6a11cb;
+        }
+
+        .questions-list {
+            margin-top: 20px;
+        }
+
+        .question-item {
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .question-prompt {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .question-knowledge {
+            color: #7f8c8d;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .question-knowledge i {
+            color: #6a11cb;
+            font-size: 12px;
+        }
+
+        .submission-count {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .submission {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e1e8ed;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .submission:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 i {
+            color: #6a11cb;
+        }
+
+        .submission-time {
+            color: #7f8c8d;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .submission-time i {
+            color: #3498db;
+        }
+
+        .content-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #e1e8ed;
+        }
+
+        .content-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-label i {
+            color: #6a11cb;
+        }
+
+        .content-text {
+            line-height: 1.6;
+            color: #34495e;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .file-section {
+            background: linear-gradient(90deg, #e3f2fd, #bbdefb);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .file-info i {
+            color: #2196f3;
+            font-size: 24px;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #1565c0;
+            word-break: break-all;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 176, 155, 0.3);
+        }
+
+        .btn-info {
+            background: linear-gradient(90deg, #17a2b8, #5bc0de);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .grade-section {
+            background: linear-gradient(90deg, #fff3cd, #ffeaa7);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .grade-label {
+            font-weight: 600;
+            color: #856404;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grade-label i {
+            color: #ffc107;
+        }
+
+        .grade-value {
+            font-weight: 700;
+            font-size: 18px;
+            color: #e74c3c;
+        }
+
+        .ai-score {
+            background: linear-gradient(90deg, #d4edda, #c3e6cb);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .ai-score-label {
+            font-weight: 600;
+            color: #155724;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-score-label i {
+            color: #28a745;
+        }
+
+        .ai-score-value {
+            font-weight: 700;
+            font-size: 20px;
+            color: #155724;
+            margin-left: 10px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 16px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+            display: block;
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(106, 17, 203, 0.05);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        .grader-result {
+            background: linear-gradient(90deg, #e8f4fd, #d1e8ff);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 4px solid #3498db;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .submission-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .assignment-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .file-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 60px; height: 60px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="width: 80px; height: 80px; top: 70%; left: 90%; animation-delay: 3s;"></div>
+        <div class="floating-element" style="width: 40px; height: 40px; top: 30%; left: 85%; animation-delay: 6s;"></div>
+        <div class="floating-element" style="width: 70px; height: 70px; top: 85%; left: 10%; animation-delay: 9s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-file-alt"></i>作业提交情况: {{ assignment.title }}</h1>
+            <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i>返回教师面板
+            </a>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-info-circle"></i>作业内容</h2>
+            <div class="assignment-info">
+                <p>{{ assignment.content }}</p>
+
+                <div class="assignment-meta">
+                    {% if assignment.due_date %}
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-times"></i>
+                        <strong>截止时间:</strong> {{ assignment.due_date.strftime('%Y-%m-%d') }}
+                    </div>
+                    {% endif %}
+
+                    {% if assignment.created_at %}
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-plus"></i>
+                        <strong>发布时间:</strong> {{ assignment.created_at.strftime('%Y-%m-%d') }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if assignment.questions %}
+                <div class="questions-list">
+                    <h4><i class="fas fa-question-circle"></i>题目与知识点:</h4>
+                    {% for question in assignment.questions %}
+                    <div class="question-item">
+                        <div class="question-prompt">{{ loop.index }}. {{ question.prompt }}</div>
+                        <div class="question-knowledge">
+                            <i class="fas fa-lightbulb"></i>
+                            知识点: {{ question.knowledge_point }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h2><i class="fas fa-users"></i>学生提交 <span class="submission-count">{{ submissions|length }} 份</span></h2>
+
+        {% if submissions %}
+            {% for submission in submissions %}
+            <div class="submission">
+                <div class="submission-header">
+                    <h3><i class="fas fa-user-graduate"></i>学生: {{ submission.student.name }} ({{ submission.student.username }})</h3>
+                    <div class="submission-time">
+                        <i class="fas fa-clock"></i>
+                        <strong>提交时间:</strong> {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}
+                    </div>
+                </div>
+
+                {% if submission.content %}
+                <div class="content-section">
+                    <div class="content-label">
+                        <i class="fas fa-align-left"></i>文本内容:
+                    </div>
+                    <div class="content-text">{{ submission.content }}</div>
+                </div>
+                {% endif %}
+
+                {% if submission.file_name %}
+                <div class="file-section">
+                    <div class="file-info">
+                        <i class="fas fa-file-upload"></i>
+                        <div class="file-name">{{ submission.file_name }}</div>
+                    </div>
+                    <div class="file-actions">
+                        <a href="{{ url_for('download_file', submission_id=submission.id) }}" class="btn btn-secondary">
+                            <i class="fas fa-download"></i>下载文件
+                        </a>
+                        <a href="{{ url_for('preview_file', submission_id=submission.id) }}" class="btn btn-info">
+                            <i class="fas fa-eye"></i>预览内容
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- AI评分结果显示 -->
+                {% if submission.evaluation_result or submission.ai_score %}
+                <div class="grader-result">
+                    <h4><i class="fas fa-robot"></i>AI评分结果:</h4>
+                    {% if submission.ai_score %}
+                        <div class="ai-score">
+                            <span class="ai-score-label">
+                                <i class="fas fa-robot"></i>AI评分:
+                            </span>
+                            <span class="ai-score-value">{{ "%.1f"|format(submission.ai_score) }}分</span>
+                        </div>
+                    {% endif %}
+                    {% if submission.evaluation_result %}
+                        <div class="evaluation-content" style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #dee2e6; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;">
+                            {{ submission.evaluation_result }}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+
+
+                <!-- 教师评分和修改意见 -->
+                <div class="grade-section" style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-chalkboard-teacher"></i>教师评分与修改意见
+                    </h4>
+                    <form method="POST" action="{{ url_for('grade_submission', submission_id=submission.id) }}" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                            <label style="font-weight: 600; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-chart-line"></i>成绩:
+                            </label>
+                            <input type="text" name="grade" value="{{ submission.grade or '' }}" 
+                                   placeholder="请输入成绩（如：85、A、优秀等）" 
+                                   style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label style="font-weight: 600; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-comment-dots"></i>修改意见:
+                            </label>
+                            <textarea name="teacher_comment" rows="4" 
+                                      placeholder="请输入修改意见或评语..."
+                                      style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;">{{ submission.teacher_comment or '' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="align-self: flex-start;">
+                            <i class="fas fa-save"></i>保存评分和意见
+                        </button>
+                    </form>
+                    {% if submission.grade or submission.teacher_comment %}
+                    <div style="margin-top: 15px; padding: 15px; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #3498db;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <i class="fas fa-info-circle" style="color: #3498db;"></i>
+                            <strong style="color: #2c3e50;">当前评分信息:</strong>
+                        </div>
+                        {% if submission.grade %}
+                        <div style="margin-bottom: 8px;">
+                            <strong>成绩:</strong> <span style="color: #e74c3c; font-weight: 700; font-size: 16px;">{{ submission.grade }}</span>
+                        </div>
+                        {% endif %}
+                        {% if submission.teacher_comment %}
+                        <div>
+                            <strong>修改意见:</strong>
+                            <div style="margin-top: 8px; padding: 10px; background: white; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word;">
+                                {{ submission.teacher_comment }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-message">
+            <i class="fas fa-inbox"></i>
+            <p>还没有学生提交此作业。</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // 按钮点击效果
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(0)';
+            });
+
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+        });
+
+        // 提交卡片悬停效果
+        document.querySelectorAll('.submission').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 6px 18px rgba(0, 0, 0, 0.08)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+            });
+        });
+    </script>
+</body>
+</html>
